@@ -1,8 +1,8 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { usePathname } from "next/navigation"
-import { useState } from "react"
+import { usePathname, useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
 
 // TypeScript interface for link props
 interface NavLinkProps {
@@ -14,6 +14,7 @@ interface NavLinkProps {
 
 export default function NavBar() {
   const pathname = usePathname()
+  const router = useRouter()
   const isWorkActive =
     pathname === "/" ||
     pathname.includes("/airasia") ||
@@ -22,10 +23,28 @@ export default function NavBar() {
     pathname.includes("/depop")
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [isFirstVisit, setIsFirstVisit] = useState(true)
 
-  // Function to handle navigation
+  // Check if this is the first visit to the site
+  useEffect(() => {
+    // Set to false after component mounts, indicating the site has loaded once
+    setIsFirstVisit(false)
+  }, [])
+
+  // Special handling for homepage navigation to avoid preloader
+  const goToHomepage = () => {
+    if (pathname !== "/") {
+      router.push("/")
+    }
+  }
+
+  // Function to handle navigation for other pages
   const handleNavigation = (href) => {
-    window.location.href = href;
+    if (href === "/") {
+      goToHomepage()
+    } else {
+      window.location.href = href
+    }
   }
 
   return (
@@ -34,7 +53,7 @@ export default function NavBar() {
         <div className="flex justify-between items-center h-16 sm:h-20 md:h-24">
           {/* Logo (Takes you Home) */}
           <div 
-            onClick={() => handleNavigation("/")} 
+            onClick={goToHomepage} 
             className="cursor-pointer"
           >
             <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
@@ -53,7 +72,7 @@ export default function NavBar() {
 
           {/* Desktop Navigation */}
           <div className="hidden sm:flex gap-4 md:gap-8">
-            <div className="relative cursor-pointer" onClick={() => handleNavigation("/")}>
+            <div className="relative cursor-pointer" onClick={goToHomepage}>
               <span className={`font-semibold ${isWorkActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
                 Work
               </span>
@@ -103,7 +122,7 @@ export default function NavBar() {
             <div 
               className="block px-3 py-2 cursor-pointer" 
               onClick={() => {
-                handleNavigation("/")
+                goToHomepage()
                 setMobileMenuOpen(false)
               }}
             >
