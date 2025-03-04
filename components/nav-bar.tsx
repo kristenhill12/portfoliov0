@@ -1,35 +1,38 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { useState } from "react"
-
-interface NavLinkProps {
-  href: string
-  label: string
-  isActive: boolean
-  isExternal?: boolean
-}
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function NavBar() {
-  const pathname = usePathname()
+  const pathname = usePathname();
+  const router = useRouter();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   const isWorkActive =
     pathname === "/" ||
-    pathname.startsWith("/airasia") ||
-    pathname.startsWith("/blue-elephant") ||
-    pathname.startsWith("/studybuddy") ||
-    pathname.startsWith("/depop")
+    pathname.includes("/airasia") ||
+    pathname.includes("/blue-elephant") ||
+    pathname.includes("/studybuddy") ||
+    pathname.includes("/depop");
 
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  function handleHomeNavigation() {
+    if (pathname === "/") {
+      // If already on the homepage, force reload to reset page state
+      router.reload();
+    } else {
+      router.push("/");
+    }
+  }
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F8F8F8]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 sm:h-20 md:h-24">
-          <Link href="/" className="cursor-pointer">
+          <button onClick={handleHomeNavigation} className="cursor-pointer">
             <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
-              <svg width="48" height="60" viewBox="0 0 539.89 689.85">
+              <svg width="48" height="60" viewBox="0 0 539.89 689.85" className="relative">
                 <path
                   fill="#2f5233"
                   d="M539.64,689.85H29.2c-1.58-149.91,61.43-294.13,168.71-397.6l64.78,68.95c15.94-40.27,77.71-141.19,125.88-113.01,113.37,66.34,155,321.21,151.08,441.66Z"
@@ -40,9 +43,9 @@ export default function NavBar() {
                 />
               </svg>
             </motion.div>
-          </Link>
+          </button>
           <div className="hidden sm:flex gap-4 md:gap-8">
-            <NavLink href="/" label="Work" isActive={isWorkActive} />
+            <NavLink href="/" label="Work" isActive={isWorkActive} onClick={handleHomeNavigation} />
             <NavLink href="/fun" label="Fun" isActive={pathname === "/fun"} />
             <NavLink href="/about" label="About" isActive={pathname === "/about"} />
             <NavLink href="/resume" label="Resume" isActive={pathname === "/resume"} />
@@ -62,7 +65,7 @@ export default function NavBar() {
       {mobileMenuOpen && (
         <div className="sm:hidden absolute top-16 left-0 right-0 bg-[#F8F8F8] border-t border-[#393938]/20">
           <div className="px-2 pt-2 pb-3 space-y-1">
-            <MobileNavLink href="/" label="Work" isActive={isWorkActive} />
+            <MobileNavLink href="/" label="Work" isActive={isWorkActive} onClick={handleHomeNavigation} />
             <MobileNavLink href="/fun" label="Fun" isActive={pathname === "/fun"} />
             <MobileNavLink href="/about" label="About" isActive={pathname === "/about"} />
             <MobileNavLink href="/resume" label="Resume" isActive={pathname === "/resume"} />
@@ -70,10 +73,18 @@ export default function NavBar() {
         </div>
       )}
     </nav>
-  )
+  );
 }
 
-function NavLink({ href, label, isActive, isExternal = false }: NavLinkProps) {
+interface NavLinkProps {
+  href: string;
+  label: string;
+  isActive: boolean;
+  isExternal?: boolean;
+  onClick?: () => void;
+}
+
+function NavLink({ href, label, isActive, isExternal = false, onClick }: NavLinkProps) {
   return (
     <div className="relative">
       {isExternal ? (
@@ -81,21 +92,17 @@ function NavLink({ href, label, isActive, isExternal = false }: NavLinkProps) {
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className={`font-semibold ${
-            isActive ? "text-[#2f5233]" : "text-[#393938]"
-          } hover:text-[#2f5233] transition-colors`}
+          className={`font-semibold ${isActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}
         >
           {label}
         </a>
       ) : (
-        <Link
-          href={href}
-          className={`font-semibold ${
-            isActive ? "text-[#2f5233]" : "text-[#393938]"}
-            hover:text-[#2f5233] transition-colors`}
+        <button
+          onClick={onClick}
+          className={`font-semibold ${isActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}
         >
           {label}
-        </Link>
+        </button>
       )}
       <div
         className={`absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233] transition-opacity duration-300 ${
@@ -103,10 +110,10 @@ function NavLink({ href, label, isActive, isExternal = false }: NavLinkProps) {
         }`}
       />
     </div>
-  )
+  );
 }
 
-function MobileNavLink({ href, label, isActive, isExternal = false }: NavLinkProps) {
+function MobileNavLink({ href, label, isActive, isExternal = false, onClick }: NavLinkProps) {
   return (
     <div className="block px-3 py-2">
       {isExternal ? (
@@ -114,22 +121,18 @@ function MobileNavLink({ href, label, isActive, isExternal = false }: NavLinkPro
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className={`block font-semibold ${
-            isActive ? "text-[#2f5233]" : "text-[#393938]"}
-            hover:text-[#2f5233] transition-colors`}
+          className={`block font-semibold ${isActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}
         >
           {label}
         </a>
       ) : (
-        <Link
-          href={href}
-          className={`block font-semibold ${
-            isActive ? "text-[#2f5233]" : "text-[#393938]"}
-            hover:text-[#2f5233] transition-colors`}
+        <button
+          onClick={onClick}
+          className={`block font-semibold ${isActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}
         >
           {label}
-        </Link>
+        </button>
       )}
     </div>
-  )
+  );
 }
