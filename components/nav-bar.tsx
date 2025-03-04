@@ -1,14 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 export default function NavBar() {
   const pathname = usePathname();
-  const router = useRouter();
-  
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   // Check if we're on a work-related page
   const isWorkActive =
     pathname === "/" ||
@@ -17,21 +16,16 @@ export default function NavBar() {
     pathname.includes("/studybuddy") ||
     pathname.includes("/depop");
 
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [firstLoad, setFirstLoad] = useState(true);
-  
-  // Track if this is the first load of the site
-  useEffect(() => {
-    // If this runs, we're not on first load anymore
-    setFirstLoad(false);
-  }, []);
+  // Super simple navigation - use direct href
+  // This should bypass any Next.js or router complications
+  const navigateTo = (path) => {
+    window.location.href = path;
+  };
 
-  // Custom navigation handler - simplified to ensure consistent loading
-  const handleNavigation = (path) => {
-    // Simple direct navigation for all cases
-    if (pathname !== path) {
-      window.location.href = path;
-    }
+  // Close mobile menu helper
+  const closeAndNavigate = (path) => {
+    setMobileMenuOpen(false);
+    navigateTo(path);
   };
 
   return (
@@ -39,7 +33,7 @@ export default function NavBar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 sm:h-20 md:h-24">
           {/* Logo (Takes you Home) */}
-          <Link href="/" className="cursor-pointer">
+          <div onClick={() => navigateTo("/")} className="cursor-pointer">
             <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
               <svg width="48" height="60" viewBox="0 0 539.89 689.85">
                 <path
@@ -52,19 +46,30 @@ export default function NavBar() {
                 />
               </svg>
             </motion.div>
-          </Link>
+          </div>
 
           {/* Desktop Navigation */}
           <div className="hidden sm:flex gap-4 md:gap-8">
-            <Link href="/" className="cursor-pointer relative">
-              <span className={`font-semibold ${isWorkActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
-                Work
-              </span>
-              {isWorkActive && <div className="absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233]" />}
-            </Link>
-            <NavLink href="/fun" label="Fun" isActive={pathname === "/fun"} />
-            <NavLink href="/about" label="About" isActive={pathname === "/about"} />
-            <NavLink href="/resume" label="Resume" isActive={pathname === "/resume"} />
+            <NavButton 
+              label="Work" 
+              isActive={isWorkActive} 
+              onClick={() => navigateTo("/")} 
+            />
+            <NavButton 
+              label="Fun" 
+              isActive={pathname === "/fun"} 
+              onClick={() => navigateTo("/fun")} 
+            />
+            <NavButton 
+              label="About" 
+              isActive={pathname === "/about"} 
+              onClick={() => navigateTo("/about")} 
+            />
+            <NavButton 
+              label="Resume" 
+              isActive={pathname === "/resume"} 
+              onClick={() => navigateTo("/resume")} 
+            />
           </div>
 
           {/* Mobile Menu Button */}
@@ -85,14 +90,26 @@ export default function NavBar() {
       {mobileMenuOpen && (
         <div className="sm:hidden absolute top-16 left-0 right-0 bg-[#F8F8F8] border-t border-[#393938]/20">
           <div className="px-2 pt-2 pb-3 space-y-1">
-            <Link href="/" onClick={() => setMobileMenuOpen(false)} className="block">
-              <span className={`block px-3 py-2 font-semibold ${isWorkActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
-                Work
-              </span>
-            </Link>
-            <MobileNavLink href="/fun" label="Fun" isActive={pathname === "/fun"} />
-            <MobileNavLink href="/about" label="About" isActive={pathname === "/about"} />
-            <MobileNavLink href="/resume" label="Resume" isActive={pathname === "/resume"} />
+            <MobileNavButton 
+              label="Work" 
+              isActive={isWorkActive} 
+              onClick={() => closeAndNavigate("/")} 
+            />
+            <MobileNavButton 
+              label="Fun" 
+              isActive={pathname === "/fun"} 
+              onClick={() => closeAndNavigate("/fun")} 
+            />
+            <MobileNavButton 
+              label="About" 
+              isActive={pathname === "/about"} 
+              onClick={() => closeAndNavigate("/about")} 
+            />
+            <MobileNavButton 
+              label="Resume" 
+              isActive={pathname === "/resume"} 
+              onClick={() => closeAndNavigate("/resume")} 
+            />
           </div>
         </div>
       )}
@@ -100,33 +117,33 @@ export default function NavBar() {
   );
 }
 
-// Desktop NavLink Component
-function NavLink({ href, label, isActive }: { href: string; label: string; isActive: boolean }) {
+// Desktop NavButton Component - Simplified to basic button
+function NavButton({ label, isActive, onClick }) {
   return (
-    <Link href={href} className="relative">
-      <span
+    <div className="relative">
+      <button
+        onClick={onClick}
         className={`font-semibold ${
-          isActive ? "text-[#2f5233]" : "text-[#393938]"
-        } hover:text-[#2f5233] transition-colors relative`}
-      >
-        {label}
-        {isActive && <div className="absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233]" />}
-      </span>
-    </Link>
-  );
-}
-
-// Mobile NavLink Component
-function MobileNavLink({ href, label, isActive }: { href: string; label: string; isActive: boolean }) {
-  return (
-    <Link href={href} onClick={() => setMobileMenuOpen(false)} className="block">
-      <span
-        className={`block px-3 py-2 font-semibold ${
           isActive ? "text-[#2f5233]" : "text-[#393938]"
         } hover:text-[#2f5233] transition-colors`}
       >
         {label}
-      </span>
-    </Link>
+      </button>
+      {isActive && <div className="absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233]" />}
+    </div>
+  );
+}
+
+// Mobile NavButton Component - Simplified to basic button
+function MobileNavButton({ label, isActive, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`block w-full text-left px-3 py-2 font-semibold ${
+        isActive ? "text-[#2f5233]" : "text-[#393938]"
+      } hover:text-[#2f5233] transition-colors`}
+    >
+      {label}
+    </button>
   );
 }
