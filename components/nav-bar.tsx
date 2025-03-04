@@ -2,11 +2,12 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function NavBar() {
   const pathname = usePathname();
+  const router = useRouter();
   const isWorkActive =
     pathname === "/" ||
     pathname.includes("/airasia") ||
@@ -16,10 +17,12 @@ export default function NavBar() {
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Ensure page transitions work properly by forcing a refresh on link click
-  function handleLinkClick(href: string) {
-    if (pathname === href) {
-      window.location.href = href; // Forces a full reload if already on the same page
+  // Force reload when clicking "Work" or Logo to always load the homepage properly
+  function handleHomeNavigation() {
+    if (pathname === "/") {
+      window.location.reload(); // Ensures it reloads even if already on home
+    } else {
+      router.push("/"); // Navigate without preloader
     }
   }
 
@@ -27,10 +30,10 @@ export default function NavBar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F8F8F8]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 sm:h-20 md:h-24">
-          {/* Logo */}
-          <Link href="/" onClick={() => handleLinkClick("/")}>
+          {/* Logo (Takes you Home) */}
+          <div onClick={handleHomeNavigation} className="cursor-pointer">
             <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
-              <svg width="48" height="60" viewBox="0 0 539.89 689.85" className="relative cursor-pointer">
+              <svg width="48" height="60" viewBox="0 0 539.89 689.85">
                 <path
                   fill="#2f5233"
                   d="M539.64,689.85H29.2c-1.58-149.91,61.43-294.13,168.71-397.6l64.78,68.95c15.94-40.27,77.71-141.19,125.88-113.01,113.37,66.34,155,321.21,151.08,441.66Z"
@@ -41,11 +44,13 @@ export default function NavBar() {
                 />
               </svg>
             </motion.div>
-          </Link>
+          </div>
 
           {/* Desktop Navigation */}
           <div className="hidden sm:flex gap-4 md:gap-8">
-            <NavLink href="/" label="Work" isActive={isWorkActive} />
+            <button onClick={handleHomeNavigation} className={`font-semibold ${isWorkActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+              Work
+            </button>
             <NavLink href="/fun" label="Fun" isActive={pathname === "/fun"} />
             <NavLink href="/about" label="About" isActive={pathname === "/about"} />
             <NavLink href="/resume" label="Resume" isActive={pathname === "/resume"} />
@@ -69,7 +74,9 @@ export default function NavBar() {
       {mobileMenuOpen && (
         <div className="sm:hidden absolute top-16 left-0 right-0 bg-[#F8F8F8] border-t border-[#393938]/20">
           <div className="px-2 pt-2 pb-3 space-y-1">
-            <MobileNavLink href="/" label="Work" isActive={isWorkActive} />
+            <button onClick={handleHomeNavigation} className={`block px-3 py-2 font-semibold ${isWorkActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+              Work
+            </button>
             <MobileNavLink href="/fun" label="Fun" isActive={pathname === "/fun"} />
             <MobileNavLink href="/about" label="About" isActive={pathname === "/about"} />
             <MobileNavLink href="/resume" label="Resume" isActive={pathname === "/resume"} />
@@ -80,7 +87,7 @@ export default function NavBar() {
   );
 }
 
-// NavLink Component
+// Desktop NavLink Component
 function NavLink({ href, label, isActive }: { href: string; label: string; isActive: boolean }) {
   return (
     <Link href={href}>
@@ -96,7 +103,7 @@ function NavLink({ href, label, isActive }: { href: string; label: string; isAct
   );
 }
 
-// MobileNavLink Component
+// Mobile NavLink Component
 function MobileNavLink({ href, label, isActive }: { href: string; label: string; isActive: boolean }) {
   return (
     <Link href={href}>
