@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface NavLinkProps {
@@ -10,10 +10,12 @@ interface NavLinkProps {
   label: string;
   isActive: boolean;
   isExternal?: boolean;
+  onClick?: () => void;
 }
 
 export default function NavBar() {
   const pathname = usePathname();
+  const router = useRouter(); // ⬅️ Fix for forcing navigation updates
   const isWorkActive =
     pathname === "/" ||
     pathname.includes("/airasia") ||
@@ -23,12 +25,19 @@ export default function NavBar() {
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const handleForceNavigation = (href: string) => {
+    if (pathname === href) {
+      router.replace(href); // ⬅️ Forces Next.js to reload the page
+    }
+  };
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F8F8F8]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 sm:h-20 md:h-24">
+          {/* ✅ FIX: Click Logo to Always Reload Home Page */}
           <Link href="/" passHref legacyBehavior>
-            <a>
+            <a onClick={() => handleForceNavigation("/")}>
               <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
                 <svg width="48" height="60" viewBox="0 0 539.89 689.85" className="relative cursor-pointer">
                   <path
@@ -43,12 +52,15 @@ export default function NavBar() {
               </motion.div>
             </a>
           </Link>
+
           <div className="hidden sm:flex gap-4 md:gap-8">
-            <NavLink href="/" label="Work" isActive={isWorkActive} />
+            {/* ✅ FIX: Click "Work" to Always Reload Home Page */}
+            <NavLink href="/" label="Work" isActive={isWorkActive} onClick={() => handleForceNavigation("/")} />
             <NavLink href="/fun" label="Fun" isActive={pathname === "/fun"} />
             <NavLink href="/about" label="About" isActive={pathname === "/about"} />
             <NavLink href="/resume" label="Resume" isActive={pathname === "/resume"} />
           </div>
+
           <div className="sm:hidden">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -61,10 +73,11 @@ export default function NavBar() {
           </div>
         </div>
       </div>
+
       {mobileMenuOpen && (
         <div className="sm:hidden absolute top-16 left-0 right-0 bg-[#F8F8F8] border-t border-[#393938]/20">
           <div className="px-2 pt-2 pb-3 space-y-1">
-            <MobileNavLink href="/" label="Work" isActive={isWorkActive} />
+            <MobileNavLink href="/" label="Work" isActive={isWorkActive} onClick={() => handleForceNavigation("/")} />
             <MobileNavLink href="/fun" label="Fun" isActive={pathname === "/fun"} />
             <MobileNavLink href="/about" label="About" isActive={pathname === "/about"} />
             <MobileNavLink href="/resume" label="Resume" isActive={pathname === "/resume"} />
@@ -75,7 +88,7 @@ export default function NavBar() {
   );
 }
 
-function NavLink({ href, label, isActive, isExternal = false }: NavLinkProps) {
+function NavLink({ href, label, isActive, isExternal = false, onClick }: NavLinkProps) {
   return (
     <div className="relative">
       {isExternal ? (
@@ -92,6 +105,7 @@ function NavLink({ href, label, isActive, isExternal = false }: NavLinkProps) {
       ) : (
         <Link href={href} passHref legacyBehavior>
           <a
+            onClick={onClick}
             className={`font-semibold ${
               isActive ? "text-[#2f5233]" : "text-[#393938]"
             } hover:text-[#2f5233] transition-colors`}
@@ -109,7 +123,7 @@ function NavLink({ href, label, isActive, isExternal = false }: NavLinkProps) {
   );
 }
 
-function MobileNavLink({ href, label, isActive, isExternal = false }: NavLinkProps) {
+function MobileNavLink({ href, label, isActive, isExternal = false, onClick }: NavLinkProps) {
   return (
     <div className="block px-3 py-2">
       {isExternal ? (
@@ -126,6 +140,7 @@ function MobileNavLink({ href, label, isActive, isExternal = false }: NavLinkPro
       ) : (
         <Link href={href} passHref legacyBehavior>
           <a
+            onClick={onClick}
             className={`block font-semibold ${
               isActive ? "text-[#2f5233]" : "text-[#393938]"
             } hover:text-[#2f5233] transition-colors`}
