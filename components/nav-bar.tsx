@@ -8,29 +8,29 @@ import { useState } from "react";
 export default function NavBar() {
   const pathname = usePathname();
   const router = useRouter();
-  const isWorkActive =
-    pathname === "/" ||
-    pathname.includes("/airasia") ||
-    pathname.includes("/blue-elephant") ||
-    pathname.includes("/studybuddy") ||
-    pathname.includes("/depop");
-
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Force reload when clicking "Work" or Logo to always load the homepage properly
+  // Active state for "Work" section
+  const isWorkActive =
+    pathname === "/" ||
+    ["/airasia", "/blue-elephant", "/studybuddy", "/depop"].some((route) =>
+      pathname.includes(route)
+    );
+
+  // Handle Home Navigation with a forced reload if already on homepage
   function handleHomeNavigation() {
     if (pathname === "/") {
-      window.location.reload(); // Ensures it reloads even if already on home
+      window.location.reload();
     } else {
-      router.push("/"); // Navigate without preloader
+      router.push("/");
     }
   }
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F8F8F8]">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F8F8F8] shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 sm:h-20 md:h-24">
-          {/* Logo (Takes you Home) */}
+          {/* Logo */}
           <div onClick={handleHomeNavigation} className="cursor-pointer">
             <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
               <svg width="48" height="60" viewBox="0 0 539.89 689.85">
@@ -47,10 +47,8 @@ export default function NavBar() {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden sm:flex gap-4 md:gap-8">
-            <button onClick={handleHomeNavigation} className={`font-semibold ${isWorkActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
-              Work
-            </button>
+          <div className="hidden sm:flex gap-6 md:gap-10">
+            <NavLink label="Work" onClick={handleHomeNavigation} isActive={isWorkActive} />
             <NavLink href="/fun" label="Fun" isActive={pathname === "/fun"} />
             <NavLink href="/about" label="About" isActive={pathname === "/about"} />
             <NavLink href="/resume" label="Resume" isActive={pathname === "/resume"} />
@@ -73,13 +71,11 @@ export default function NavBar() {
       {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="sm:hidden absolute top-16 left-0 right-0 bg-[#F8F8F8] border-t border-[#393938]/20">
-          <div className="px-2 pt-2 pb-3 space-y-1">
-            <button onClick={handleHomeNavigation} className={`block px-3 py-2 font-semibold ${isWorkActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
-              Work
-            </button>
-            <MobileNavLink href="/fun" label="Fun" isActive={pathname === "/fun"} />
-            <MobileNavLink href="/about" label="About" isActive={pathname === "/about"} />
-            <MobileNavLink href="/resume" label="Resume" isActive={pathname === "/resume"} />
+          <div className="px-4 py-2 space-y-2">
+            <NavLink label="Work" onClick={handleHomeNavigation} isActive={isWorkActive} mobile />
+            <NavLink href="/fun" label="Fun" isActive={pathname === "/fun"} mobile />
+            <NavLink href="/about" label="About" isActive={pathname === "/about"} mobile />
+            <NavLink href="/resume" label="Resume" isActive={pathname === "/resume"} mobile />
           </div>
         </div>
       )}
@@ -87,32 +83,38 @@ export default function NavBar() {
   );
 }
 
-// Desktop NavLink Component
-function NavLink({ href, label, isActive }: { href: string; label: string; isActive: boolean }) {
-  return (
-    <Link href={href}>
-      <span
-        className={`font-semibold ${
-          isActive ? "text-[#2f5233]" : "text-[#393938]"
-        } hover:text-[#2f5233] transition-colors relative`}
-      >
-        {label}
-        {isActive && <div className="absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233]" />}
-      </span>
-    </Link>
-  );
-}
+// Generic NavLink Component (Handles Both Desktop & Mobile)
+function NavLink({
+  href,
+  label,
+  isActive,
+  onClick,
+  mobile = false,
+}: {
+  href?: string;
+  label: string;
+  isActive: boolean;
+  onClick?: () => void;
+  mobile?: boolean;
+}) {
+  const commonClasses = `font-semibold ${
+    isActive ? "text-[#2f5233]" : "text-[#393938]"
+  } hover:text-[#2f5233] transition-colors`;
 
-// Mobile NavLink Component
-function MobileNavLink({ href, label, isActive }: { href: string; label: string; isActive: boolean }) {
-  return (
-    <Link href={href}>
-      <span
-        className={`block px-3 py-2 font-semibold ${
-          isActive ? "text-[#2f5233]" : "text-[#393938]"
-        } hover:text-[#2f5233] transition-colors`}
-      >
+  if (onClick) {
+    return (
+      <button onClick={onClick} className={mobile ? `block px-3 py-2 ${commonClasses}` : commonClasses}>
         {label}
+        {isActive && !mobile && <div className="absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233]" />}
+      </button>
+    );
+  }
+
+  return (
+    <Link href={href!}>
+      <span className={mobile ? `block px-3 py-2 ${commonClasses}` : `relative ${commonClasses}`}>
+        {label}
+        {isActive && !mobile && <div className="absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233]" />}
       </span>
     </Link>
   );
