@@ -23,10 +23,8 @@ export default function NavBar() {
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-  // Function to handle navigation with preloader awareness
+  // Function to handle navigation
   const handleNavigation = (href) => {
-    // For all navigation, use direct location change
-    // This is the most reliable method and will work consistently
     window.location.href = href;
   }
 
