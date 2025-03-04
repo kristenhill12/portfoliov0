@@ -23,9 +23,24 @@ export default function NavBar() {
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-  // Function to handle navigation
+  // Function to handle navigation with preloader awareness
   const handleNavigation = (href) => {
-    window.location.href = href;
+    // For Work/Logo to HomePage navigation
+    if (href === "/") {
+      // Check if we're already on the homepage
+      if (pathname === "/") {
+        // Do nothing if already on homepage
+        return;
+      } else {
+        // Use history.pushState to navigate without page reload (which triggers preloader)
+        window.history.pushState({}, "", href);
+        // Force a page content update without full reload
+        window.dispatchEvent(new Event('popstate'));
+      }
+    } else {
+      // For all other navigation, use normal navigation
+      window.location.href = href;
+    }
   }
 
   return (
