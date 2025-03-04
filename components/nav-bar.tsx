@@ -1,41 +1,44 @@
-"use client";
+"use client"
 
-import { motion } from "framer-motion";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { motion } from "framer-motion"
+import { usePathname } from "next/navigation"
+import { useState } from "react"
+
+// TypeScript interface for link props
+interface NavLinkProps {
+  href: string
+  label: string
+  isActive: boolean
+  isExternal?: boolean
+}
 
 export default function NavBar() {
-  const pathname = usePathname();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  // Check if we're on a work-related page
+  const pathname = usePathname()
   const isWorkActive =
     pathname === "/" ||
     pathname.includes("/airasia") ||
     pathname.includes("/blue-elephant") ||
     pathname.includes("/studybuddy") ||
-    pathname.includes("/depop");
+    pathname.includes("/depop")
 
-  // Super simple navigation - use direct href
-  // This should bypass any Next.js or router complications
-  const navigateTo = (path) => {
-    window.location.href = path;
-  };
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-  // Close mobile menu helper
-  const closeAndNavigate = (path) => {
-    setMobileMenuOpen(false);
-    navigateTo(path);
-  };
+  // Function to handle navigation
+  const handleNavigation = (href) => {
+    window.location.href = href;
+  }
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F8F8F8]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 sm:h-20 md:h-24">
           {/* Logo (Takes you Home) */}
-          <div onClick={() => navigateTo("/")} className="cursor-pointer">
+          <div 
+            onClick={() => handleNavigation("/")} 
+            className="cursor-pointer"
+          >
             <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
-              <svg width="48" height="60" viewBox="0 0 539.89 689.85">
+              <svg width="48" height="60" viewBox="0 0 539.89 689.85" className="relative cursor-pointer">
                 <path
                   fill="#2f5233"
                   d="M539.64,689.85H29.2c-1.58-149.91,61.43-294.13,168.71-397.6l64.78,68.95c15.94-40.27,77.71-141.19,125.88-113.01,113.37,66.34,155,321.21,151.08,441.66Z"
@@ -50,26 +53,33 @@ export default function NavBar() {
 
           {/* Desktop Navigation */}
           <div className="hidden sm:flex gap-4 md:gap-8">
-            <NavButton 
-              label="Work" 
-              isActive={isWorkActive} 
-              onClick={() => navigateTo("/")} 
-            />
-            <NavButton 
-              label="Fun" 
-              isActive={pathname === "/fun"} 
-              onClick={() => navigateTo("/fun")} 
-            />
-            <NavButton 
-              label="About" 
-              isActive={pathname === "/about"} 
-              onClick={() => navigateTo("/about")} 
-            />
-            <NavButton 
-              label="Resume" 
-              isActive={pathname === "/resume"} 
-              onClick={() => navigateTo("/resume")} 
-            />
+            <div className="relative cursor-pointer" onClick={() => handleNavigation("/")}>
+              <span className={`font-semibold ${isWorkActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+                Work
+              </span>
+              <div className={`absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233] transition-opacity duration-300 ${isWorkActive ? "opacity-100" : "opacity-0"}`} />
+            </div>
+            
+            <div className="relative cursor-pointer" onClick={() => handleNavigation("/fun")}>
+              <span className={`font-semibold ${pathname === "/fun" ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+                Fun
+              </span>
+              <div className={`absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233] transition-opacity duration-300 ${pathname === "/fun" ? "opacity-100" : "opacity-0"}`} />
+            </div>
+            
+            <div className="relative cursor-pointer" onClick={() => handleNavigation("/about")}>
+              <span className={`font-semibold ${pathname === "/about" ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+                About
+              </span>
+              <div className={`absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233] transition-opacity duration-300 ${pathname === "/about" ? "opacity-100" : "opacity-0"}`} />
+            </div>
+            
+            <div className="relative cursor-pointer" onClick={() => handleNavigation("/resume")}>
+              <span className={`font-semibold ${pathname === "/resume" ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+                Resume
+              </span>
+              <div className={`absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233] transition-opacity duration-300 ${pathname === "/resume" ? "opacity-100" : "opacity-0"}`} />
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
@@ -90,60 +100,56 @@ export default function NavBar() {
       {mobileMenuOpen && (
         <div className="sm:hidden absolute top-16 left-0 right-0 bg-[#F8F8F8] border-t border-[#393938]/20">
           <div className="px-2 pt-2 pb-3 space-y-1">
-            <MobileNavButton 
-              label="Work" 
-              isActive={isWorkActive} 
-              onClick={() => closeAndNavigate("/")} 
-            />
-            <MobileNavButton 
-              label="Fun" 
-              isActive={pathname === "/fun"} 
-              onClick={() => closeAndNavigate("/fun")} 
-            />
-            <MobileNavButton 
-              label="About" 
-              isActive={pathname === "/about"} 
-              onClick={() => closeAndNavigate("/about")} 
-            />
-            <MobileNavButton 
-              label="Resume" 
-              isActive={pathname === "/resume"} 
-              onClick={() => closeAndNavigate("/resume")} 
-            />
+            <div 
+              className="block px-3 py-2 cursor-pointer" 
+              onClick={() => {
+                handleNavigation("/")
+                setMobileMenuOpen(false)
+              }}
+            >
+              <span className={`block font-semibold ${isWorkActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+                Work
+              </span>
+            </div>
+            
+            <div 
+              className="block px-3 py-2 cursor-pointer" 
+              onClick={() => {
+                handleNavigation("/fun")
+                setMobileMenuOpen(false)
+              }}
+            >
+              <span className={`block font-semibold ${pathname === "/fun" ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+                Fun
+              </span>
+            </div>
+            
+            <div 
+              className="block px-3 py-2 cursor-pointer" 
+              onClick={() => {
+                handleNavigation("/about")
+                setMobileMenuOpen(false)
+              }}
+            >
+              <span className={`block font-semibold ${pathname === "/about" ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+                About
+              </span>
+            </div>
+            
+            <div 
+              className="block px-3 py-2 cursor-pointer" 
+              onClick={() => {
+                handleNavigation("/resume")
+                setMobileMenuOpen(false)
+              }}
+            >
+              <span className={`block font-semibold ${pathname === "/resume" ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+                Resume
+              </span>
+            </div>
           </div>
         </div>
       )}
     </nav>
-  );
-}
-
-// Desktop NavButton Component - Simplified to basic button
-function NavButton({ label, isActive, onClick }) {
-  return (
-    <div className="relative">
-      <button
-        onClick={onClick}
-        className={`font-semibold ${
-          isActive ? "text-[#2f5233]" : "text-[#393938]"
-        } hover:text-[#2f5233] transition-colors`}
-      >
-        {label}
-      </button>
-      {isActive && <div className="absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233]" />}
-    </div>
-  );
-}
-
-// Mobile NavButton Component - Simplified to basic button
-function MobileNavButton({ label, isActive, onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      className={`block w-full text-left px-3 py-2 font-semibold ${
-        isActive ? "text-[#2f5233]" : "text-[#393938]"
-      } hover:text-[#2f5233] transition-colors`}
-    >
-      {label}
-    </button>
-  );
+  )
 }
