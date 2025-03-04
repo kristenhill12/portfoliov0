@@ -26,20 +26,11 @@ export default function NavBar() {
     setFirstLoad(false);
   }, []);
 
-  // Custom navigation handler
-  const handleNavigation = (path, isWorkNav = false) => {
-    if (path === "/" && isWorkNav) {
-      // For Work navigation to homepage
-      if (pathname === "/") {
-        // If already on homepage, do nothing special
-        return;
-      } else {
-        // Navigate to homepage without preloader
-        router.push(path);
-      }
-    } else {
-      // Normal navigation for other links
-      router.push(path);
+  // Custom navigation handler - simplified to ensure consistent loading
+  const handleNavigation = (path) => {
+    // Simple direct navigation for all cases
+    if (pathname !== path) {
+      window.location.href = path;
     }
   };
 
@@ -48,7 +39,7 @@ export default function NavBar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 sm:h-20 md:h-24">
           {/* Logo (Takes you Home) */}
-          <div onClick={() => handleNavigation("/")} className="cursor-pointer">
+          <Link href="/" className="cursor-pointer">
             <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
               <svg width="48" height="60" viewBox="0 0 539.89 689.85">
                 <path
@@ -61,16 +52,16 @@ export default function NavBar() {
                 />
               </svg>
             </motion.div>
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden sm:flex gap-4 md:gap-8">
-            <div onClick={() => handleNavigation("/", true)} className="cursor-pointer relative">
+            <Link href="/" className="cursor-pointer relative">
               <span className={`font-semibold ${isWorkActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
                 Work
               </span>
               {isWorkActive && <div className="absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233]" />}
-            </div>
+            </Link>
             <NavLink href="/fun" label="Fun" isActive={pathname === "/fun"} />
             <NavLink href="/about" label="About" isActive={pathname === "/about"} />
             <NavLink href="/resume" label="Resume" isActive={pathname === "/resume"} />
@@ -94,14 +85,11 @@ export default function NavBar() {
       {mobileMenuOpen && (
         <div className="sm:hidden absolute top-16 left-0 right-0 bg-[#F8F8F8] border-t border-[#393938]/20">
           <div className="px-2 pt-2 pb-3 space-y-1">
-            <div onClick={() => {
-              handleNavigation("/", true);
-              setMobileMenuOpen(false);
-            }} className="cursor-pointer">
+            <Link href="/" onClick={() => setMobileMenuOpen(false)} className="block">
               <span className={`block px-3 py-2 font-semibold ${isWorkActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
                 Work
               </span>
-            </div>
+            </Link>
             <MobileNavLink href="/fun" label="Fun" isActive={pathname === "/fun"} />
             <MobileNavLink href="/about" label="About" isActive={pathname === "/about"} />
             <MobileNavLink href="/resume" label="Resume" isActive={pathname === "/resume"} />
@@ -114,15 +102,8 @@ export default function NavBar() {
 
 // Desktop NavLink Component
 function NavLink({ href, label, isActive }: { href: string; label: string; isActive: boolean }) {
-  const router = useRouter();
-  
-  const handleLinkClick = (e) => {
-    e.preventDefault();
-    router.push(href);
-  };
-  
   return (
-    <div onClick={handleLinkClick} className="cursor-pointer relative">
+    <Link href={href} className="relative">
       <span
         className={`font-semibold ${
           isActive ? "text-[#2f5233]" : "text-[#393938]"
@@ -131,23 +112,14 @@ function NavLink({ href, label, isActive }: { href: string; label: string; isAct
         {label}
         {isActive && <div className="absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233]" />}
       </span>
-    </div>
+    </Link>
   );
 }
 
 // Mobile NavLink Component
 function MobileNavLink({ href, label, isActive }: { href: string; label: string; isActive: boolean }) {
-  const router = useRouter();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
-  const handleLinkClick = (e) => {
-    e.preventDefault();
-    router.push(href);
-    setMobileMenuOpen(false); // Close mobile menu when navigating
-  };
-  
   return (
-    <div onClick={handleLinkClick} className="cursor-pointer block">
+    <Link href={href} onClick={() => setMobileMenuOpen(false)} className="block">
       <span
         className={`block px-3 py-2 font-semibold ${
           isActive ? "text-[#2f5233]" : "text-[#393938]"
@@ -155,6 +127,6 @@ function MobileNavLink({ href, label, isActive }: { href: string; label: string;
       >
         {label}
       </span>
-    </div>
+    </Link>
   );
 }
