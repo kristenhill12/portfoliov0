@@ -53,7 +53,8 @@ export default function NavBar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F8F8F8]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 sm:h-20 md:h-24">
-          <Link href="/" passHref>
+          {/* Logo (Takes you Home) - Using direct window.open */}
+          <div onClick={() => window.open("/", "_self")} className="cursor-pointer">
             <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
               <svg width="48" height="60" viewBox="0 0 539.89 689.85" className="relative cursor-pointer">
                 <path
@@ -66,13 +67,24 @@ export default function NavBar() {
                 />
               </svg>
             </motion.div>
-          </Link>
+          </div>
+
+          {/* Desktop Navigation */}
           <div className="hidden sm:flex gap-4 md:gap-8">
-            <NavLink href="/" label="Work" isActive={isWorkActive} />
+            {/* Special case for Work link to homepage */}
+            <div className="relative cursor-pointer" onClick={() => window.open("/", "_self")}>
+              <span className={`font-semibold ${isWorkActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+                Work
+              </span>
+              <div className={`absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233] transition-opacity duration-300 ${isWorkActive ? "opacity-100" : "opacity-0"}`} />
+            </div>
+            
             <NavLink href="/fun" label="Fun" isActive={pathname === "/fun"} />
             <NavLink href="/about" label="About" isActive={pathname === "/about"} />
             <NavLink href="/resume" label="Resume" isActive={pathname === "/resume"} />
           </div>
+
+          {/* Mobile Menu Button */}
           <div className="sm:hidden">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -88,7 +100,19 @@ export default function NavBar() {
       {mobileMenuOpen && (
         <div className="sm:hidden absolute top-16 left-0 right-0 bg-[#F8F8F8] border-t border-[#393938]/20">
           <div className="px-2 pt-2 pb-3 space-y-1">
-            <MobileNavLink href="/" label="Work" isActive={isWorkActive} />
+            {/* Special case for Work link in mobile menu */}
+            <div 
+              className="block px-3 py-2 cursor-pointer" 
+              onClick={() => {
+                window.open("/", "_self")
+                setMobileMenuOpen(false)
+              }}
+            >
+              <span className={`block font-semibold ${isWorkActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+                Work
+              </span>
+            </div>
+            
             <MobileNavLink href="/fun" label="Fun" isActive={pathname === "/fun"} />
             <MobileNavLink href="/about" label="About" isActive={pathname === "/about"} />
             <MobileNavLink href="/resume" label="Resume" isActive={pathname === "/resume"} />
