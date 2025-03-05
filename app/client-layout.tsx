@@ -8,8 +8,11 @@ import NavBar from "@/components/nav-bar"
 import PageTransition from "@/components/page-transition"
 import { useSmoothScroll } from "@/hooks/use-smooth-scroll"
 
-// Create a flag to track site initialization outside of component render cycles
-let siteInitialized = false;
+// Check if this is the first visit using sessionStorage
+const checkFirstVisit = () => {
+  if (typeof window === 'undefined') return true; // Server-side rendering
+  return !sessionStorage.getItem('siteVisited');
+};
 
 export default function ClientLayout({
   children,
@@ -17,15 +20,17 @@ export default function ClientLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
-  const [isFirstLoad, setIsFirstLoad] = useState(!siteInitialized)
+  const [isFirstLoad, setIsFirstLoad] = useState(checkFirstVisit())
   
   useSmoothScroll()
   
   useEffect(() => {
     // Only run the preloader if it's truly the first load
     if (isFirstLoad) {
-      // Mark that we've initialized the site for this session
-      siteInitialized = true;
+      // Mark that we've visited the site
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('siteVisited', 'true');
+      }
       
       const timer = setTimeout(() => {
         setIsFirstLoad(false)

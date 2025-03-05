@@ -18,14 +18,30 @@ export default function NavBar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   // Function to handle navigation
+"use client"
+
+import { motion } from "framer-motion"
+import { usePathname, useRouter } from "next/navigation"
+import { useState } from "react"
+
+export default function NavBar() {
+  const pathname = usePathname()
+  const router = useRouter()
+  
+  const isWorkActive =
+    pathname === "/" ||
+    pathname.includes("/airasia") ||
+    pathname.includes("/blue-elephant") ||
+    pathname.includes("/studybuddy") ||
+    pathname.includes("/depop")
+
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  // Function to handle navigation
   const handleNavigation = (href) => {
-    if (href === "/" && pathname !== "/") {
-      // For homepage, use router.push to avoid full page reload
-      router.push(href)
-    } else {
-      // For other pages
-      window.location.href = href
-    }
+    // For all navigation, use direct location navigation
+    // This is the most reliable method but will trigger full page loads
+    window.location.href = href;
   }
 
   return (
