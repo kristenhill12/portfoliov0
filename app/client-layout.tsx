@@ -8,30 +8,28 @@ import NavBar from "@/components/nav-bar"
 import PageTransition from "@/components/page-transition"
 import { useSmoothScroll } from "@/hooks/use-smooth-scroll"
 
-// Check if this is the first visit using sessionStorage
-const checkFirstVisit = () => {
-  if (typeof window === 'undefined') return true; // Server-side rendering
-  return !sessionStorage.getItem('siteVisited');
-};
-
 export default function ClientLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
   const pathname = usePathname()
-  const [isFirstLoad, setIsFirstLoad] = useState(checkFirstVisit())
+  const [isFirstLoad, setIsFirstLoad] = useState(true)
+  const [showPreloader, setShowPreloader] = useState(true)
   
   useSmoothScroll()
   
   useEffect(() => {
-    // Only run the preloader if it's truly the first load
+    // Check if this is a navigation from another page
+    const fromNavigation = sessionStorage.getItem('navigationClick') === 'true';
+    
+    if (fromNavigation) {
+      // Skip preloader if coming from navigation
+      setShowPreloader(false);
+      sessionStorage.removeItem('navigationClick');
+    }
+    
     if (isFirstLoad) {
-      // Mark that we've visited the site
-      if (typeof window !== 'undefined') {
-        sessionStorage.setItem('siteVisited', 'true');
-      }
-      
       const timer = setTimeout(() => {
         setIsFirstLoad(false)
       }, 2000)
@@ -44,7 +42,7 @@ export default function ClientLayout({
     <>
       <NavBar />
       <AnimatePresence mode="wait">
-        {isFirstLoad && pathname === "/" ? (
+        {isFirstLoad && pathname === "/" && showPreloader ? (
           <Preloader key="preloader" />
         ) : (
           <PageTransition key={pathname}>{children}</PageTransition>

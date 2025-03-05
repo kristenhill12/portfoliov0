@@ -1,13 +1,19 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
 import { useState } from "react"
+
+// TypeScript interface for link props
+interface NavLinkProps {
+  href: string
+  label: string
+  isActive: boolean
+  isExternal?: boolean
+}
 
 export default function NavBar() {
   const pathname = usePathname()
-  const router = useRouter()
-  
   const isWorkActive =
     pathname === "/" ||
     pathname.includes("/airasia") ||
@@ -17,10 +23,12 @@ export default function NavBar() {
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-  // Function to handle navigation
+  Copy// Function to handle navigation
   const handleNavigation = (href) => {
-    // For all navigation, use direct location navigation
-    // This is the most reliable method but will trigger full page loads
+    if (href === "/") {
+      // For homepage, set a flag to skip preloader
+      sessionStorage.setItem('navigationClick', 'true');
+    }
     window.location.href = href;
   }
 
