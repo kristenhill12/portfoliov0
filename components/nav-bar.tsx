@@ -17,10 +17,10 @@ export default function NavBar() {
     pathname.includes("/studybuddy") ||
     pathname.includes("/depop");
 
-  // ✅ FIX: Force reload if already on home
+  // ✅ FIX: Make sure homepage reloads when clicked
   const handleHomeNavigation = () => {
     if (pathname === "/") {
-      router.replace("/"); // Ensures the homepage reloads properly
+      window.location.href = "/"; // Forces the homepage to reload fully
     } else {
       router.push("/"); // Normal navigation
     }
@@ -31,7 +31,7 @@ export default function NavBar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F8F8F8]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 sm:h-20 md:h-24">
-          {/* ✅ FIX: Clicking the Logo Reloads Home */}
+          {/* ✅ FIX: Clicking Logo now properly loads Home */}
           <div onClick={handleHomeNavigation} className="cursor-pointer">
             <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
               <svg width="48" height="60" viewBox="0 0 539.89 689.85">
