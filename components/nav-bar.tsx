@@ -12,13 +12,13 @@ export default function NavBar() {
 
   const isWorkActive = pathname === "/";
 
-  // ✅ **Ensure "Work" & Logo correctly go home WITHOUT preloader**
+  // ✅ Correctly navigate to the homepage without triggering preloader again
   const handleHomeNavigation = (e) => {
     e.preventDefault();
     setMobileMenuOpen(false);
 
     if (pathname === "/") {
-      window.scrollTo({ top: 0, behavior: "smooth" }); // ✅ Scroll up if already home
+      window.scrollTo({ top: 0, behavior: "smooth" }); // ✅ Scroll up if already on home
     } else {
       router.push("/"); // ✅ Navigate to home WITHOUT preloader
     }
@@ -28,7 +28,7 @@ export default function NavBar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F8F8F8]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 sm:h-20 md:h-24">
-          {/* ✅ FIXED: Clicking Logo navigates home correctly */}
+          {/* ✅ Clicking Logo now correctly loads Home */}
           <a href="/" onClick={handleHomeNavigation} className="cursor-pointer">
             <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
               <svg width="48" height="60" viewBox="0 0 539.89 689.85">
@@ -38,7 +38,7 @@ export default function NavBar() {
             </motion.div>
           </a>
 
-          {/* ✅ FIXED: "Work" properly navigates home */}
+          {/* ✅ FIXED: "Work" correctly navigates to homepage */}
           <div className="hidden sm:flex gap-4 md:gap-8">
             <NavLink href="/" label="Work" isActive={isWorkActive} onClick={handleHomeNavigation} />
             <NavLink href="/fun" label="Fun" isActive={pathname === "/fun"} />
