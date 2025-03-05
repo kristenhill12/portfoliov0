@@ -18,26 +18,6 @@ export default function NavBar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   // Function to handle navigation
-"use client"
-
-import { motion } from "framer-motion"
-import { usePathname, useRouter } from "next/navigation"
-import { useState } from "react"
-
-export default function NavBar() {
-  const pathname = usePathname()
-  const router = useRouter()
-  
-  const isWorkActive =
-    pathname === "/" ||
-    pathname.includes("/airasia") ||
-    pathname.includes("/blue-elephant") ||
-    pathname.includes("/studybuddy") ||
-    pathname.includes("/depop")
-
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-
-  // Function to handle navigation
   const handleNavigation = (href) => {
     // For all navigation, use direct location navigation
     // This is the most reliable method but will trigger full page loads
