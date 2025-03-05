@@ -12,11 +12,16 @@ export default function NavBar() {
 
   const isWorkActive = pathname === "/";
 
-  // ✅ Fix navigation to home without preloader
+  // ✅ Fix navigation to home without issues
   const handleHomeNavigation = (e) => {
     e.preventDefault();
     setMobileMenuOpen(false);
-    router.push("/");
+
+    if (pathname === "/") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      router.push("/");
+    }
   };
 
   return (
