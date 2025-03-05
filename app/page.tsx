@@ -30,7 +30,8 @@ export default function Home() {
         <title>Kristen Hill Portfolio</title>
       </Head>
       <motion.div
-        initial={{ opacity: 0 }}
+        key="home-page"
+        initial={{ opacity: 1 }} // ✅ Ensure it starts fully visible
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.8 }}
