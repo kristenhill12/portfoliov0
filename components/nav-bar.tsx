@@ -1,39 +1,60 @@
 "use client";
-
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
+// Missing NavLink component definition
+function NavLink({ href, label, isActive }) {
+  const router = useRouter();
+  
+  const handleClick = (e) => {
+    e.preventDefault();
+    router.push(href);
+  };
+  
+  return (
+    <a 
+      href={href} 
+      onClick={handleClick}
+      className={`font-semibold ${isActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}
+    >
+      {label}
+    </a>
+  );
+}
+
 export default function NavBar() {
   const pathname = usePathname();
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  const isWorkActive =
+  
+  const isWorkActive = 
     pathname === "/" ||
     pathname.includes("/airasia") ||
     pathname.includes("/blue-elephant") ||
     pathname.includes("/studybuddy") ||
     pathname.includes("/depop");
-
-  // ✅ Ensure proper navigation to homepage
+  
+  // Fixed navigation function
   function handleHomeNavigation(e) {
     e.preventDefault();
     setMobileMenuOpen(false);
-
+    
+    // Always use router.push to ensure consistent navigation behavior
+    router.push("/");
+    
+    // If already on homepage, scroll to top
     if (pathname === "/") {
-      window.scrollTo({ top: 0, behavior: "smooth" }); // Smooth scroll to top
-    } else {
-      router.push("/"); // Navigate to homepage without preloader
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   }
-
+  
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F8F8F8]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 sm:h-20 md:h-24">
-          {/* ✅ Clicking Logo now properly navigates */}
+          {/* Logo navigation */}
           <a href="/" onClick={handleHomeNavigation} className="cursor-pointer">
             <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
               <svg width="48" height="60" viewBox="0 0 539.89 689.85">
@@ -48,8 +69,8 @@ export default function NavBar() {
               </svg>
             </motion.div>
           </a>
-
-          {/* ✅ Work button now properly navigates */}
+          
+          {/* Navigation links */}
           <div className="hidden sm:flex gap-4 md:gap-8">
             <button
               onClick={handleHomeNavigation}
