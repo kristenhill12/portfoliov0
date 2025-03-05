@@ -20,7 +20,7 @@ export default function NavBar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F8F8F8]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 sm:h-20 md:h-24">
-          {/* ✅ FIX: Logo uses Link like other pages */}
+          {/* ✅ FIX: "Work" and Logo work like other links */}
           <Link href="/" className="cursor-pointer">
             <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
               <svg width="48" height="60" viewBox="0 0 539.89 689.85">
@@ -36,7 +36,6 @@ export default function NavBar() {
             </motion.div>
           </Link>
 
-          {/* ✅ FIX: "Work" uses Link like other links */}
           <div className="hidden sm:flex gap-4 md:gap-8">
             <NavLink href="/" label="Work" isActive={isWorkActive} />
             <NavLink href="/fun" label="Fun" isActive={pathname === "/fun"} />
@@ -57,41 +56,6 @@ export default function NavBar() {
           </div>
         </div>
       </div>
-
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="sm:hidden absolute top-16 left-0 right-0 bg-[#F8F8F8] border-t border-[#393938]/20">
-          <div className="px-2 pt-2 pb-3 space-y-1">
-            <MobileNavLink href="/" label="Work" isActive={isWorkActive} />
-            <MobileNavLink href="/fun" label="Fun" isActive={pathname === "/fun"} />
-            <MobileNavLink href="/about" label="About" isActive={pathname === "/about"} />
-            <MobileNavLink href="/resume" label="Resume" isActive={pathname === "/resume"} />
-          </div>
-        </div>
-      )}
     </nav>
-  );
-}
-
-// ✅ NavLink Component (Desktop)
-function NavLink({ href, label, isActive }: { href: string; label: string; isActive: boolean }) {
-  return (
-    <div className="relative">
-      <Link href={href} className={`font-semibold ${isActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
-        {label}
-      </Link>
-      <div className={`absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233] transition-opacity duration-300 ${isActive ? "opacity-100" : "opacity-0"}`} />
-    </div>
-  );
-}
-
-// ✅ MobileNavLink Component
-function MobileNavLink({ href, label, isActive }: { href: string; label: string; isActive: boolean }) {
-  return (
-    <div className="block px-3 py-2">
-      <Link href={href} className={`block font-semibold ${isActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
-        {label}
-      </Link>
-    </div>
   );
 }

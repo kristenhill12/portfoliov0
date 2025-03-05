@@ -19,8 +19,8 @@ export default function ClientLayout({
   useSmoothScroll();
 
   useEffect(() => {
-    const hasVisited = sessionStorage.getItem("hasVisited");
-    if (hasVisited) {
+    // ✅ Fix: Ensure the preloader only runs ONCE
+    if (sessionStorage.getItem("hasVisited")) {
       setIsFirstLoad(false);
     } else {
       setTimeout(() => {
@@ -34,9 +34,11 @@ export default function ClientLayout({
     <>
       <NavBar />
       <AnimatePresence mode="wait">
-        <PageTransition key={pathname} disableFadeOnHome={pathname === "/"}>
-          {isFirstLoad && pathname === "/" ? <Preloader key="preloader" /> : children}
-        </PageTransition>
+        {isFirstLoad && pathname === "/" ? (
+          <Preloader key="preloader" />
+        ) : (
+          <PageTransition key={pathname}>{children}</PageTransition>
+        )}
       </AnimatePresence>
     </>
   );

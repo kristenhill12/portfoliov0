@@ -9,16 +9,10 @@ const variants = {
   exit: { opacity: 0 },
 };
 
-export default function PageTransition({
-  children,
-  disableFadeOnHome = false,
-}: {
-  children: React.ReactNode;
-  disableFadeOnHome?: boolean;
-}) {
+export default function PageTransition({ children }: { children: React.ReactNode }) {
   return (
     <motion.main
-      variants={disableFadeOnHome ? {} : variants} // 🔥 Disable fade on home page
+      variants={variants}
       initial="hidden"
       animate="enter"
       exit="exit"
