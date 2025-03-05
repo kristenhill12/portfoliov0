@@ -7,41 +7,34 @@ import { useState, useEffect } from "react";
 export default function NavBar() {
   const pathname = usePathname();
   const router = useRouter();
-  const isWorkActive =
-    pathname === "/" ||
-    pathname.includes("/airasia") ||
-    pathname.includes("/blue-elephant") ||
-    pathname.includes("/studybuddy") ||
-    pathname.includes("/depop");
-
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [hasLoaded, setHasLoaded] = useState(false);
 
-  // Ensure preloader only appears on first page load
+  // Track if the preloader has already been shown
   useEffect(() => {
     if (typeof window !== "undefined") {
       const firstLoad = sessionStorage.getItem("hasLoaded");
       if (!firstLoad) {
         sessionStorage.setItem("hasLoaded", "true");
-      } else {
-        setHasLoaded(true); // No preloader after first load
       }
     }
   }, []);
 
-  // Function to navigate without triggering preloader
-  const handleNavigation = (href: string) => {
-    if (pathname === href) return; // Prevent reloading the same page
+  // ✅ FIX: Navigate to home properly
+  const handleHomeNavigation = () => {
+    if (pathname === "/") {
+      router.replace("/"); // This forces Next.js to reload the home page correctly
+    } else {
+      router.push("/");
+    }
     setMobileMenuOpen(false);
-    router.push(href);
   };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F8F8F8]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 sm:h-20 md:h-24">
-          {/* Logo (Navigates Home) */}
-          <div onClick={() => handleNavigation("/")} className="cursor-pointer">
+          {/* ✅ FIX: Logo navigates home correctly */}
+          <div onClick={handleHomeNavigation} className="cursor-pointer">
             <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
               <svg width="48" height="60" viewBox="0 0 539.89 689.85">
                 <path
@@ -58,10 +51,10 @@ export default function NavBar() {
 
           {/* Desktop Navigation */}
           <div className="hidden sm:flex gap-4 md:gap-8">
-            <NavLink href="/" label="Work" isActive={isWorkActive} onClick={handleNavigation} />
-            <NavLink href="/fun" label="Fun" isActive={pathname === "/fun"} onClick={handleNavigation} />
-            <NavLink href="/about" label="About" isActive={pathname === "/about"} onClick={handleNavigation} />
-            <NavLink href="/resume" label="Resume" isActive={pathname === "/resume"} onClick={handleNavigation} />
+            <NavLink label="Work" isActive={pathname === "/"} onClick={handleHomeNavigation} />
+            <NavLink href="/fun" label="Fun" isActive={pathname === "/fun"} />
+            <NavLink href="/about" label="About" isActive={pathname === "/about"} />
+            <NavLink href="/resume" label="Resume" isActive={pathname === "/resume"} />
           </div>
 
           {/* Mobile Menu Button */}
@@ -82,10 +75,10 @@ export default function NavBar() {
       {mobileMenuOpen && (
         <div className="sm:hidden absolute top-16 left-0 right-0 bg-[#F8F8F8] border-t border-[#393938]/20">
           <div className="px-2 pt-2 pb-3 space-y-1">
-            <MobileNavLink href="/" label="Work" isActive={isWorkActive} onClick={handleNavigation} />
-            <MobileNavLink href="/fun" label="Fun" isActive={pathname === "/fun"} onClick={handleNavigation} />
-            <MobileNavLink href="/about" label="About" isActive={pathname === "/about"} onClick={handleNavigation} />
-            <MobileNavLink href="/resume" label="Resume" isActive={pathname === "/resume"} onClick={handleNavigation} />
+            <MobileNavLink label="Work" isActive={pathname === "/"} onClick={handleHomeNavigation} />
+            <MobileNavLink href="/fun" label="Fun" isActive={pathname === "/fun"} />
+            <MobileNavLink href="/about" label="About" isActive={pathname === "/about"} />
+            <MobileNavLink href="/resume" label="Resume" isActive={pathname === "/resume"} />
           </div>
         </div>
       )}
@@ -94,24 +87,46 @@ export default function NavBar() {
 }
 
 // NavLink Component (Desktop)
-function NavLink({ href, label, isActive, onClick }: { href: string; label: string; isActive: boolean; onClick: (href: string) => void }) {
+function NavLink({
+  href,
+  label,
+  isActive,
+  onClick,
+}: {
+  href?: string;
+  label: string;
+  isActive: boolean;
+  onClick?: () => void;
+}) {
   return (
-    <div className="relative cursor-pointer" onClick={() => onClick(href)}>
-      <span className={`font-semibold ${isActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
-        {label}
-      </span>
+    <div className="relative cursor-pointer" onClick={onClick ? onClick : () => {}}>
+      {href ? (
+        <a href={href} className={`font-semibold ${isActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+          {label}
+        </a>
+      ) : (
+        <span className={`font-semibold ${isActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+          {label}
+        </span>
+      )}
       <div className={`absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233] transition-opacity duration-300 ${isActive ? "opacity-100" : "opacity-0"}`} />
     </div>
   );
 }
 
 // MobileNavLink Component
-function MobileNavLink({ href, label, isActive, onClick }: { href: string; label: string; isActive: boolean; onClick: (href: string) => void }) {
+function MobileNavLink({ href, label, isActive, onClick }: { href?: string; label: string; isActive: boolean; onClick?: () => void }) {
   return (
-    <div className="block px-3 py-2 cursor-pointer" onClick={() => onClick(href)}>
-      <span className={`block font-semibold ${isActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
-        {label}
-      </span>
+    <div className="block px-3 py-2 cursor-pointer" onClick={onClick ? onClick : () => {}}>
+      {href ? (
+        <a href={href} className={`block font-semibold ${isActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+          {label}
+        </a>
+      ) : (
+        <span className={`block font-semibold ${isActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+          {label}
+        </span>
+      )}
     </div>
   );
 }
