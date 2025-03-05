@@ -1,42 +1,8 @@
 "use client"
 
 import { motion } from "framer-motion"
-import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
-
-function NavLink({ href, label, isActive, isExternal = false }: NavLinkProps) {
-  return (
-    <div className="relative">
-      {isExternal ? (
-        <a
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`font-semibold ${
-            isActive ? "text-[#2f5233]" : "text-[#393938]"
-          } hover:text-[#2f5233] transition-colors`}
-        >
-          {label}
-        </a>
-      ) : (
-        <Link
-          href={href}
-          className={`font-semibold ${
-            isActive ? "text-[#2f5233]" : "text-[#393938]"
-          } hover:text-[#2f5233] transition-colors`}
-        >
-          {label}
-        </Link>
-      )}
-      <div
-        className={`absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233] transition-opacity duration-300 ${
-          isActive ? "opacity-100" : "opacity-0"
-        }`}
-      />
-    </div>
-  )
-}
 
 export default function NavBar() {
   const pathname = usePathname()
@@ -53,8 +19,8 @@ export default function NavBar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F8F8F8]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 sm:h-20 md:h-24">
-          {/* Logo (Takes you Home) - Using direct window.open */}
-          <div onClick={() => window.open("/", "_self")} className="cursor-pointer">
+          {/* Logo (Takes you Home) */}
+          <a href="/" className="cursor-pointer">
             <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
               <svg width="48" height="60" viewBox="0 0 539.89 689.85" className="relative cursor-pointer">
                 <path
@@ -67,21 +33,49 @@ export default function NavBar() {
                 />
               </svg>
             </motion.div>
-          </div>
+          </a>
 
           {/* Desktop Navigation */}
           <div className="hidden sm:flex gap-4 md:gap-8">
-            {/* Special case for Work link to homepage */}
-            <div className="relative cursor-pointer" onClick={() => window.open("/", "_self")}>
-              <span className={`font-semibold ${isWorkActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+            <div className="relative">
+              <a 
+                href="/" 
+                className={`font-semibold ${isWorkActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}
+              >
                 Work
-              </span>
+              </a>
               <div className={`absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233] transition-opacity duration-300 ${isWorkActive ? "opacity-100" : "opacity-0"}`} />
             </div>
             
-            <NavLink href="/fun" label="Fun" isActive={pathname === "/fun"} />
-            <NavLink href="/about" label="About" isActive={pathname === "/about"} />
-            <NavLink href="/resume" label="Resume" isActive={pathname === "/resume"} />
+            <div className="relative">
+              <a 
+                href="/fun" 
+                className={`font-semibold ${pathname === "/fun" ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}
+              >
+                Fun
+              </a>
+              <div className={`absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233] transition-opacity duration-300 ${pathname === "/fun" ? "opacity-100" : "opacity-0"}`} />
+            </div>
+            
+            <div className="relative">
+              <a 
+                href="/about" 
+                className={`font-semibold ${pathname === "/about" ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}
+              >
+                About
+              </a>
+              <div className={`absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233] transition-opacity duration-300 ${pathname === "/about" ? "opacity-100" : "opacity-0"}`} />
+            </div>
+            
+            <div className="relative">
+              <a 
+                href="/resume" 
+                className={`font-semibold ${pathname === "/resume" ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}
+              >
+                Resume
+              </a>
+              <div className={`absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233] transition-opacity duration-300 ${pathname === "/resume" ? "opacity-100" : "opacity-0"}`} />
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
@@ -97,63 +91,53 @@ export default function NavBar() {
           </div>
         </div>
       </div>
+
+      {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="sm:hidden absolute top-16 left-0 right-0 bg-[#F8F8F8] border-t border-[#393938]/20">
           <div className="px-2 pt-2 pb-3 space-y-1">
-            {/* Special case for Work link in mobile menu */}
-            <div 
-              className="block px-3 py-2 cursor-pointer" 
-              onClick={() => {
-                window.open("/", "_self")
-                setMobileMenuOpen(false)
-              }}
-            >
-              <span className={`block font-semibold ${isWorkActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+            <div className="block px-3 py-2">
+              <a
+                href="/"
+                className={`block font-semibold ${isWorkActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
                 Work
-              </span>
+              </a>
             </div>
             
-            <MobileNavLink href="/fun" label="Fun" isActive={pathname === "/fun"} />
-            <MobileNavLink href="/about" label="About" isActive={pathname === "/about"} />
-            <MobileNavLink href="/resume" label="Resume" isActive={pathname === "/resume"} />
+            <div className="block px-3 py-2">
+              <a
+                href="/fun"
+                className={`block font-semibold ${pathname === "/fun" ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Fun
+              </a>
+            </div>
+            
+            <div className="block px-3 py-2">
+              <a
+                href="/about"
+                className={`block font-semibold ${pathname === "/about" ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                About
+              </a>
+            </div>
+            
+            <div className="block px-3 py-2">
+              <a
+                href="/resume"
+                className={`block font-semibold ${pathname === "/resume" ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Resume
+              </a>
+            </div>
           </div>
         </div>
       )}
     </nav>
-  )
-}
-
-interface NavLinkProps {
-  href: string
-  label: string
-  isActive: boolean
-  isExternal?: boolean
-}
-
-function MobileNavLink({ href, label, isActive, isExternal = false }: NavLinkProps) {
-  return (
-    <div className="block px-3 py-2">
-      {isExternal ? (
-        <a
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`block font-semibold ${
-            isActive ? "text-[#2f5233]" : "text-[#393938]"
-          } hover:text-[#2f5233] transition-colors`}
-        >
-          {label}
-        </a>
-      ) : (
-        <Link
-          href={href}
-          className={`block font-semibold ${
-            isActive ? "text-[#2f5233]" : "text-[#393938]"
-          } hover:text-[#2f5233] transition-colors`}
-        >
-          {label}
-        </Link>
-      )}
-    </div>
   )
 }
