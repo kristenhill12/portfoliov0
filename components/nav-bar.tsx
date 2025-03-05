@@ -10,19 +10,34 @@ export default function NavBar() {
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const isWorkActive =
-    pathname === "/" ||
-    pathname.includes("/airasia") ||
-    pathname.includes("/blue-elephant") ||
-    pathname.includes("/studybuddy") ||
-    pathname.includes("/depop");
+  // Simplified active path checking
+  const isWorkActive = 
+    pathname === "/" || 
+    pathname.startsWith("/airasia") || 
+    pathname.startsWith("/blue-elephant") || 
+    pathname.startsWith("/studybuddy") || 
+    pathname.startsWith("/depop");
+
+  // Handler to force navigation and state reset
+  const handleLogoClick = (e) => {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+    router.push("/");
+  };
+
+  const handleWorkClick = (e) => {
+    if (pathname === "/") {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F8F8F8]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 sm:h-20 md:h-24">
-          {/* ✅ FIXED: Home navigation works like other pages */}
-          <Link href="/" className="cursor-pointer">
+          {/* Logo with explicit click handler */}
+          <a href="/" onClick={handleLogoClick} className="cursor-pointer">
             <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
               <svg width="48" height="60" viewBox="0 0 539.89 689.85">
                 <path
@@ -35,10 +50,10 @@ export default function NavBar() {
                 />
               </svg>
             </motion.div>
-          </Link>
+          </a>
 
           <div className="hidden sm:flex gap-4 md:gap-8">
-            <NavLink href="/" label="Work" isActive={isWorkActive} />
+            <NavLink href="/" label="Work" isActive={isWorkActive} onClick={handleWorkClick} />
             <NavLink href="/fun" label="Fun" isActive={pathname === "/fun"} />
             <NavLink href="/about" label="About" isActive={pathname === "/about"} />
             <NavLink href="/resume" label="Resume" isActive={pathname === "/resume"} />
@@ -62,10 +77,13 @@ export default function NavBar() {
       {mobileMenuOpen && (
         <div className="sm:hidden absolute top-16 left-0 right-0 bg-[#F8F8F8] border-t border-[#393938]/20">
           <div className="px-2 pt-2 pb-3 space-y-1">
-            <MobileNavLink href="/" label="Work" isActive={isWorkActive} />
-            <MobileNavLink href="/fun" label="Fun" isActive={pathname === "/fun"} />
-            <MobileNavLink href="/about" label="About" isActive={pathname === "/about"} />
-            <MobileNavLink href="/resume" label="Resume" isActive={pathname === "/resume"} />
+            <MobileNavLink href="/" label="Work" isActive={isWorkActive} onClick={() => {
+              setMobileMenuOpen(false);
+              if (pathname === "/") window.scrollTo({ top: 0, behavior: "smooth" });
+            }} />
+            <MobileNavLink href="/fun" label="Fun" isActive={pathname === "/fun"} onClick={() => setMobileMenuOpen(false)} />
+            <MobileNavLink href="/about" label="About" isActive={pathname === "/about"} onClick={() => setMobileMenuOpen(false)} />
+            <MobileNavLink href="/resume" label="Resume" isActive={pathname === "/resume"} onClick={() => setMobileMenuOpen(false)} />
           </div>
         </div>
       )}
@@ -73,23 +91,47 @@ export default function NavBar() {
   );
 }
 
-// ✅ NavLink Component (Desktop)
-function NavLink({ href, label, isActive }: { href: string; label: string; isActive: boolean }) {
+// NavLink Component (Desktop) with onClick support
+function NavLink({ href, label, isActive, onClick }: { 
+  href: string; 
+  label: string; 
+  isActive: boolean;
+  onClick?: (e: React.MouseEvent) => void;
+}) {
   return (
     <div className="relative">
-      <Link href={href} className={`font-semibold ${isActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+      <Link 
+        href={href} 
+        onClick={onClick}
+        className={`font-semibold ${isActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}
+      >
         {label}
       </Link>
-      <div className={`absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233] transition-opacity duration-300 ${isActive ? "opacity-100" : "opacity-0"}`} />
+      <div 
+        className={`absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233] transition-opacity duration-300 ${
+          isActive ? "opacity-100" : "opacity-0"
+        }`} 
+      />
     </div>
   );
 }
 
-// ✅ MobileNavLink Component
-function MobileNavLink({ href, label, isActive }: { href: string; label: string; isActive: boolean }) {
+// MobileNavLink Component with onClick support
+function MobileNavLink({ href, label, isActive, onClick }: { 
+  href: string; 
+  label: string; 
+  isActive: boolean;
+  onClick?: () => void;
+}) {
   return (
     <div className="block px-3 py-2">
-      <Link href={href} className={`block font-semibold ${isActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+      <Link 
+        href={href}
+        onClick={onClick} 
+        className={`block font-semibold ${
+          isActive ? "text-[#2f5233]" : "text-[#393938]"
+        } hover:text-[#2f5233] transition-colors`}
+      >
         {label}
       </Link>
     </div>
