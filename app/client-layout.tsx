@@ -15,36 +15,39 @@ export default function ClientLayout({
 }) {
   const pathname = usePathname()
   const [isFirstLoad, setIsFirstLoad] = useState(true)
-  const [initialLoadComplete, setInitialLoadComplete] = useState(false)
+  // Check sessionStorage immediately to see if the site has been loaded before
+  const [hasVisitedBefore, setHasVisitedBefore] = useState(() => {
+    // This runs only on the client side
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem('siteVisited') === 'true'
+    }
+    return false
+  })
   
   useSmoothScroll()
   
   useEffect(() => {
-    // Check if we've already loaded the site in this session
-    const hasLoaded = sessionStorage.getItem('initialLoadComplete')
-    
-    if (hasLoaded) {
-      // If we've already loaded once, skip the preloader entirely
-      setIsFirstLoad(false)
-      setInitialLoadComplete(true)
-    } else if (isFirstLoad) {
-      // First time loading the site
+    // Only show preloader if this is truly the first visit
+    if (isFirstLoad && !hasVisitedBefore) {
       const timer = setTimeout(() => {
         setIsFirstLoad(false)
-        setInitialLoadComplete(true)
-        // Save that we've loaded the site
-        sessionStorage.setItem('initialLoadComplete', 'true')
+        // Mark that the site has been visited
+        setHasVisitedBefore(true)
+        sessionStorage.setItem('siteVisited', 'true')
       }, 2000)
       
       return () => clearTimeout(timer)
+    } else {
+      // Skip preloader for returning visitors
+      setIsFirstLoad(false)
     }
-  }, [isFirstLoad])
+  }, [isFirstLoad, hasVisitedBefore])
   
   return (
     <>
       <NavBar />
       <AnimatePresence mode="wait">
-        {isFirstLoad && pathname === "/" ? (
+        {isFirstLoad && pathname === "/" && !hasVisitedBefore ? (
           <Preloader key="preloader" />
         ) : (
           <PageTransition key={pathname}>{children}</PageTransition>
