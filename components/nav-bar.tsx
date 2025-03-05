@@ -15,16 +15,12 @@ export default function NavBar() {
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-  const goToPage = (path) => {
-    window.location.href = path;
-  }
-
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F8F8F8]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 sm:h-20 md:h-24">
           {/* Logo (Takes you Home) */}
-          <div onClick={() => goToPage("/")} className="cursor-pointer">
+          <a href="/" className="cursor-pointer">
             <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
               <svg width="48" height="60" viewBox="0 0 539.89 689.85" className="relative cursor-pointer">
                 <path
@@ -37,35 +33,47 @@ export default function NavBar() {
                 />
               </svg>
             </motion.div>
-          </div>
+          </a>
 
           {/* Desktop Navigation */}
           <div className="hidden sm:flex gap-4 md:gap-8">
-            <div className="relative cursor-pointer" onClick={() => goToPage("/")}>
-              <span className={`font-semibold ${isWorkActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+            <div className="relative">
+              <a 
+                href="/" 
+                className={`font-semibold ${isWorkActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}
+              >
                 Work
-              </span>
+              </a>
               <div className={`absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233] transition-opacity duration-300 ${isWorkActive ? "opacity-100" : "opacity-0"}`} />
             </div>
             
-            <div className="relative cursor-pointer" onClick={() => goToPage("/fun")}>
-              <span className={`font-semibold ${pathname === "/fun" ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+            <div className="relative">
+              <a 
+                href="/fun" 
+                className={`font-semibold ${pathname === "/fun" ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}
+              >
                 Fun
-              </span>
+              </a>
               <div className={`absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233] transition-opacity duration-300 ${pathname === "/fun" ? "opacity-100" : "opacity-0"}`} />
             </div>
             
-            <div className="relative cursor-pointer" onClick={() => goToPage("/about")}>
-              <span className={`font-semibold ${pathname === "/about" ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+            <div className="relative">
+              <a 
+                href="/about" 
+                className={`font-semibold ${pathname === "/about" ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}
+              >
                 About
-              </span>
+              </a>
               <div className={`absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233] transition-opacity duration-300 ${pathname === "/about" ? "opacity-100" : "opacity-0"}`} />
             </div>
             
-            <div className="relative cursor-pointer" onClick={() => goToPage("/resume")}>
-              <span className={`font-semibold ${pathname === "/resume" ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+            <div className="relative">
+              <a 
+                href="/resume" 
+                className={`font-semibold ${pathname === "/resume" ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}
+              >
                 Resume
-              </span>
+              </a>
               <div className={`absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233] transition-opacity duration-300 ${pathname === "/resume" ? "opacity-100" : "opacity-0"}`} />
             </div>
           </div>
@@ -88,52 +96,44 @@ export default function NavBar() {
       {mobileMenuOpen && (
         <div className="sm:hidden absolute top-16 left-0 right-0 bg-[#F8F8F8] border-t border-[#393938]/20">
           <div className="px-2 pt-2 pb-3 space-y-1">
-            <div 
-              className="block px-3 py-2 cursor-pointer" 
-              onClick={() => {
-                goToPage("/")
-                setMobileMenuOpen(false)
-              }}
-            >
-              <span className={`block font-semibold ${isWorkActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+            <div className="block px-3 py-2">
+              
+                href="/"
+                className={`block font-semibold ${isWorkActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
                 Work
-              </span>
+              </a>
             </div>
             
-            <div 
-              className="block px-3 py-2 cursor-pointer" 
-              onClick={() => {
-                goToPage("/fun")
-                setMobileMenuOpen(false)
-              }}
-            >
-              <span className={`block font-semibold ${pathname === "/fun" ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+            <div className="block px-3 py-2">
+              
+                href="/fun"
+                className={`block font-semibold ${pathname === "/fun" ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
                 Fun
-              </span>
+              </a>
             </div>
             
-            <div 
-              className="block px-3 py-2 cursor-pointer" 
-              onClick={() => {
-                goToPage("/about")
-                setMobileMenuOpen(false)
-              }}
-            >
-              <span className={`block font-semibold ${pathname === "/about" ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+            <div className="block px-3 py-2">
+              
+                href="/about"
+                className={`block font-semibold ${pathname === "/about" ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
                 About
-              </span>
+              </a>
             </div>
             
-            <div 
-              className="block px-3 py-2 cursor-pointer" 
-              onClick={() => {
-                goToPage("/resume")
-                setMobileMenuOpen(false)
-              }}
-            >
-              <span className={`block font-semibold ${pathname === "/resume" ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+            <div className="block px-3 py-2">
+              
+                href="/resume"
+                className={`block font-semibold ${pathname === "/resume" ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
                 Resume
-              </span>
+              </a>
             </div>
           </div>
         </div>
