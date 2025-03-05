@@ -12,23 +12,18 @@ export default function NavBar() {
 
   const isWorkActive = pathname === "/";
 
-  // ✅ Correctly navigate to the homepage without triggering preloader again
+  // ✅ Fix navigation to home without preloader
   const handleHomeNavigation = (e) => {
     e.preventDefault();
     setMobileMenuOpen(false);
-
-    if (pathname === "/") {
-      window.scrollTo({ top: 0, behavior: "smooth" }); // ✅ Scroll up if already on home
-    } else {
-      router.push("/"); // ✅ Navigate to home WITHOUT preloader
-    }
+    router.push("/");
   };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F8F8F8]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 sm:h-20 md:h-24">
-          {/* ✅ Clicking Logo now correctly loads Home */}
+          {/* ✅ Clicking Logo now correctly navigates home */}
           <a href="/" onClick={handleHomeNavigation} className="cursor-pointer">
             <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
               <svg width="48" height="60" viewBox="0 0 539.89 689.85">
@@ -38,9 +33,11 @@ export default function NavBar() {
             </motion.div>
           </a>
 
-          {/* ✅ FIXED: "Work" correctly navigates to homepage */}
+          {/* ✅ "Work" correctly navigates to homepage */}
           <div className="hidden sm:flex gap-4 md:gap-8">
-            <NavLink href="/" label="Work" isActive={isWorkActive} onClick={handleHomeNavigation} />
+            <button onClick={handleHomeNavigation} className={`font-semibold ${isWorkActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+              Work
+            </button>
             <NavLink href="/fun" label="Fun" isActive={pathname === "/fun"} />
             <NavLink href="/about" label="About" isActive={pathname === "/about"} />
             <NavLink href="/resume" label="Resume" isActive={pathname === "/resume"} />
@@ -52,10 +49,10 @@ export default function NavBar() {
 }
 
 // ✅ Ensures "Work" and other links work properly
-function NavLink({ href, label, isActive, onClick }: { href: string; label: string; isActive: boolean; onClick?: () => void }) {
+function NavLink({ href, label, isActive }: { href: string; label: string; isActive: boolean }) {
   return (
     <div className="relative">
-      <Link href={href} onClick={onClick} className={`font-semibold ${isActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
+      <Link href={href} className={`font-semibold ${isActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
         {label}
       </Link>
       <div className={`absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233] transition-opacity duration-300 ${isActive ? "opacity-100" : "opacity-0"}`} />
