@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { motion } from "framer-motion"
 import { usePathname } from "next/navigation"
@@ -97,7 +97,7 @@ export default function NavBar() {
         <div className="sm:hidden absolute top-16 left-0 right-0 bg-[#F8F8F8] border-t border-[#393938]/20">
           <div className="px-2 pt-2 pb-3 space-y-1">
             <div className="block px-3 py-2">
-              
+              <a
                 href="/"
                 className={`block font-semibold ${isWorkActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}
                 onClick={() => setMobileMenuOpen(false)}
@@ -107,7 +107,7 @@ export default function NavBar() {
             </div>
             
             <div className="block px-3 py-2">
-              
+              <a
                 href="/fun"
                 className={`block font-semibold ${pathname === "/fun" ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}
                 onClick={() => setMobileMenuOpen(false)}
@@ -117,7 +117,7 @@ export default function NavBar() {
             </div>
             
             <div className="block px-3 py-2">
-              
+              <a
                 href="/about"
                 className={`block font-semibold ${pathname === "/about" ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}
                 onClick={() => setMobileMenuOpen(false)}
@@ -127,7 +127,7 @@ export default function NavBar() {
             </div>
             
             <div className="block px-3 py-2">
-              
+              <a
                 href="/resume"
                 className={`block font-semibold ${pathname === "/resume" ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}
                 onClick={() => setMobileMenuOpen(false)}
