@@ -15,27 +15,13 @@ export default function ClientLayout({
 }) {
   const pathname = usePathname()
   const [isFirstLoad, setIsFirstLoad] = useState(true)
-  const [initialVisit, setInitialVisit] = useState(true)
   
   useSmoothScroll()
   
   useEffect(() => {
-    // Check if we've visited before using sessionStorage
-    if (typeof window !== 'undefined') {
-      const visited = sessionStorage.getItem('siteVisited')
-      if (visited) {
-        setInitialVisit(false)
-      }
-    }
-    
     if (isFirstLoad) {
       const timer = setTimeout(() => {
         setIsFirstLoad(false)
-        
-        // Mark that we've visited the site
-        if (typeof window !== 'undefined') {
-          sessionStorage.setItem('siteVisited', 'true')
-        }
       }, 2000)
       
       return () => clearTimeout(timer)
@@ -46,7 +32,7 @@ export default function ClientLayout({
     <>
       <NavBar />
       <AnimatePresence mode="wait">
-        {isFirstLoad && pathname === "/" && initialVisit ? (
+        {isFirstLoad && pathname === "/" ? (
           <Preloader key="preloader" />
         ) : (
           <PageTransition key={pathname}>{children}</PageTransition>
