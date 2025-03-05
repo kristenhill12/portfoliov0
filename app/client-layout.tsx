@@ -19,23 +19,24 @@ export default function ClientLayout({
   useSmoothScroll();
 
   useEffect(() => {
-    if (isFirstLoad) {
-      const timer = setTimeout(() => {
+    const hasVisited = sessionStorage.getItem("hasVisited");
+    if (hasVisited) {
+      setIsFirstLoad(false);
+    } else {
+      setTimeout(() => {
         setIsFirstLoad(false);
+        sessionStorage.setItem("hasVisited", "true");
       }, 2000);
-      return () => clearTimeout(timer);
     }
-  }, [isFirstLoad]);
+  }, []);
 
   return (
     <>
       <NavBar />
       <AnimatePresence mode="wait">
-        {isFirstLoad && pathname === "/" ? (
-          <Preloader key="preloader" />
-        ) : (
-          <PageTransition key={pathname}>{children}</PageTransition>
-        )}
+        <PageTransition key={pathname} disableFadeOnHome={pathname === "/"}>
+          {isFirstLoad && pathname === "/" ? <Preloader key="preloader" /> : children}
+        </PageTransition>
       </AnimatePresence>
     </>
   );
