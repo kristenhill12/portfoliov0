@@ -2,11 +2,12 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function NavBar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isWorkActive =
@@ -16,22 +17,17 @@ export default function NavBar() {
     pathname.includes("/studybuddy") ||
     pathname.includes("/depop");
 
-  // ✅ Function to force reload homepage with Preloader
+  // ✅ Function to handle home navigation **correctly**
   const navigateHome = (e) => {
     e.preventDefault();
     setMobileMenuOpen(false);
-    
-    if (typeof window !== "undefined") {
-      if (pathname === "/") {
-        // 🔥 If already on home page, just scroll to top
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      } else {
-        // 🔥 If navigating to home, trigger the preloader
-        if (window.resetAndShowPreloader) {
-          window.resetAndShowPreloader();
-        }
-        window.location.href = "/";
-      }
+
+    if (pathname === "/") {
+      // ✅ If already on the home page, scroll to top
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      // ✅ If navigating from another page, use Next.js router
+      router.push("/");
     }
   };
 
@@ -39,7 +35,7 @@ export default function NavBar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F8F8F8]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 sm:h-20 md:h-24">
-          {/* ✅ FIXED: Clicking logo properly loads home */}
+          {/* ✅ FIXED: Clicking Logo properly loads home */}
           <a href="/" onClick={navigateHome} className="cursor-pointer">
             <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
               <svg width="48" height="60" viewBox="0 0 539.89 689.85">

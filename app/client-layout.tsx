@@ -15,38 +15,21 @@ export default function ClientLayout({
 }) {
   const pathname = usePathname();
   const [isFirstLoad, setIsFirstLoad] = useState(true);
-  const [forceReload, setForceReload] = useState(false);
 
   useSmoothScroll();
 
   useEffect(() => {
-    const hasVisited = sessionStorage.getItem("hasVisited");
-    
-    if (hasVisited && !forceReload) {
-      setIsFirstLoad(false);
-    } else {
-      const timer = setTimeout(() => {
+    const hasVisitedBefore = localStorage.getItem("hasVisitedBefore");
+
+    if (!hasVisitedBefore && pathname === "/") {
+      setTimeout(() => {
         setIsFirstLoad(false);
-        sessionStorage.setItem("hasVisited", "true");
-        setForceReload(false);
-      }, 2500); // 🔥 Adjust this time if you want the preloader to last longer
-    
-      return () => clearTimeout(timer);
+        localStorage.setItem("hasVisitedBefore", "true");
+      }, 2000); // ✅ Fix preloader timing to match V0
+    } else {
+      setIsFirstLoad(false);
     }
-  }, [forceReload]);
-
-  // ✅ Function to force show the preloader again
-  useEffect(() => {
-    window.resetAndShowPreloader = () => {
-      sessionStorage.removeItem("hasVisited");
-      setForceReload(true);
-      setIsFirstLoad(true);
-    };
-
-    return () => {
-      delete window.resetAndShowPreloader;
-    };
-  }, []);
+  }, [pathname]);
 
   return (
     <>

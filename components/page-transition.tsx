@@ -17,11 +17,10 @@ export default function PageTransition({ children }: { children: React.ReactNode
       animate="enter"
       exit="exit"
       transition={{
-        type: "tween",
-        ease: [0.25, 0.1, 0.25, 1], // cubic-bezier ease
-        duration: 0.5,
+        duration: 0.4, // ✅ Adjusted for smooth transitions
+        ease: "easeInOut",
       }}
-      className="pt-24" // Add top padding to account for the fixed NavBar
+      className="pt-24"
     >
       {children}
     </motion.main>
