@@ -15,19 +15,27 @@ export default function ClientLayout({
 }) {
   const pathname = usePathname();
   const [isFirstLoad, setIsFirstLoad] = useState(true);
+  const [key, setKey] = useState(pathname);
 
   useSmoothScroll();
 
+  // Set a unique key whenever pathname changes to force re-render
   useEffect(() => {
-    // ✅ Make sure preloader lasts **long enough** before disappearing
+    setKey(pathname + "-" + Date.now());
+  }, [pathname]);
+
+  useEffect(() => {
+    // Handle preloader timing
     const hasVisited = sessionStorage.getItem("hasVisited");
     if (hasVisited) {
       setIsFirstLoad(false);
     } else {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         setIsFirstLoad(false);
         sessionStorage.setItem("hasVisited", "true");
-      }, 3000); // 🔥 Increase time to **3 seconds** (adjust if needed)
+      }, 3000);
+      
+      return () => clearTimeout(timer);
     }
   }, []);
 
@@ -38,7 +46,7 @@ export default function ClientLayout({
         {isFirstLoad && pathname === "/" ? (
           <Preloader key="preloader" />
         ) : (
-          <PageTransition key={pathname}>{children}</PageTransition>
+          <PageTransition key={key}>{children}</PageTransition>
         )}
       </AnimatePresence>
     </>
