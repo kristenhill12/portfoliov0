@@ -19,17 +19,15 @@ export default function ClientLayout({
   useSmoothScroll();
 
   useEffect(() => {
-    const hasVisitedBefore = localStorage.getItem("hasVisitedBefore");
-
-    if (!hasVisitedBefore || pathname === "/") {
+    if (!sessionStorage.getItem("hasVisited")) {
       setTimeout(() => {
         setIsFirstLoad(false);
-        localStorage.setItem("hasVisitedBefore", "true");
-      }, 3000); // ✅ **Fixed preloader timing to 3 seconds**
+        sessionStorage.setItem("hasVisited", "true");
+      }, 3000); // ✅ **Only shows preloader on first visit**
     } else {
       setIsFirstLoad(false);
     }
-  }, [pathname]);
+  }, []);
 
   return (
     <>
