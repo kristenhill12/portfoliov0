@@ -19,12 +19,18 @@ export default function ClientLayout({
   useSmoothScroll();
 
   useEffect(() => {
-    if (!sessionStorage.getItem("hasVisited")) {
-      setTimeout(() => {
+    const hasVisitedBefore = sessionStorage.getItem("hasVisitedBefore");
+
+    if (!hasVisitedBefore) {
+      // First visit: Show preloader for 3 seconds
+      const timer = setTimeout(() => {
         setIsFirstLoad(false);
-        sessionStorage.setItem("hasVisited", "true");
-      }, 3000); // ✅ **Only shows preloader on first visit**
+        sessionStorage.setItem("hasVisitedBefore", "true"); // Remember user has visited
+      }, 3000); // Adjust time as needed
+
+      return () => clearTimeout(timer);
     } else {
+      // Not first visit: Don't show preloader
       setIsFirstLoad(false);
     }
   }, []);

@@ -31,7 +31,7 @@ export default function Home() {
       </Head>
       <motion.div
         key="home-page"
-        initial={{ opacity: 1 }} // ✅ Ensure it starts fully visible
+        initial={{ opacity: 1 }} // ✅ Ensure fully visible
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.8 }}
