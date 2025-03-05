@@ -21,11 +21,11 @@ export default function ClientLayout({
   useEffect(() => {
     const hasVisitedBefore = localStorage.getItem("hasVisitedBefore");
 
-    if (!hasVisitedBefore && pathname === "/") {
+    if (!hasVisitedBefore || pathname === "/") {
       setTimeout(() => {
         setIsFirstLoad(false);
         localStorage.setItem("hasVisitedBefore", "true");
-      }, 2000); // ✅ Fix preloader timing to match V0
+      }, 3000); // ✅ **Fixed preloader timing to 3 seconds**
     } else {
       setIsFirstLoad(false);
     }

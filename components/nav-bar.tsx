@@ -10,22 +10,20 @@ export default function NavBar() {
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const isWorkActive =
-    pathname === "/" ||
+  const isWorkActive = pathname === "/" ||
     pathname.includes("/airasia") ||
     pathname.includes("/blue-elephant") ||
     pathname.includes("/studybuddy") ||
     pathname.includes("/depop");
 
-  // ✅ Function to handle home navigation with proper transition
+  // ✅ **Fixed navigation back to home (triggers preloader)**
   const handleHomeNavigation = (e) => {
     e.preventDefault();
     setMobileMenuOpen(false);
-
-    if (pathname === "/") {
-      window.scrollTo({ top: 0, behavior: "smooth" }); // ✅ If already home, just scroll up
-    } else {
-      router.push("/"); // ✅ If on another page, navigate smoothly
+    
+    if (typeof window !== "undefined") {
+      // ✅ **Force a full reload to show the preloader**
+      window.location.href = "/";
     }
   };
 
@@ -33,7 +31,7 @@ export default function NavBar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F8F8F8]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 sm:h-20 md:h-24">
-          {/* ✅ FIXED: Clicking Logo properly loads Home */}
+          {/* ✅ **Clicking Logo now properly reloads home page with preloader** */}
           <a href="/" onClick={handleHomeNavigation} className="cursor-pointer">
             <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
               <svg width="48" height="60" viewBox="0 0 539.89 689.85">
@@ -44,18 +42,14 @@ export default function NavBar() {
           </a>
 
           <div className="hidden sm:flex gap-4 md:gap-8">
-            {/* ✅ FIXED: Clicking "Work" now works correctly */}
+            {/* ✅ **Fixed "Work" button to always reload home page properly** */}
             <div className="relative">
-              <a
-                href="/"
-                onClick={handleHomeNavigation}
-                className={`font-semibold ${isWorkActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}
-              >
+              <a href="/" onClick={handleHomeNavigation} className={`font-semibold ${isWorkActive ? "text-[#2f5233]" : "text-[#393938]"} hover:text-[#2f5233] transition-colors`}>
                 Work
               </a>
               <div className={`absolute -top-2 left-0 right-0 h-[3px] bg-[#2f5233] transition-opacity duration-300 ${isWorkActive ? "opacity-100" : "opacity-0"}`} />
             </div>
-            
+
             <NavLink href="/fun" label="Fun" isActive={pathname === "/fun"} />
             <NavLink href="/about" label="About" isActive={pathname === "/about"} />
             <NavLink href="/resume" label="Resume" isActive={pathname === "/resume"} />
