@@ -15,28 +15,37 @@ export default function ClientLayout({
 }) {
   const pathname = usePathname();
   const [isFirstLoad, setIsFirstLoad] = useState(true);
-  const [key, setKey] = useState(pathname);
+  const [forceReload, setForceReload] = useState(false);
 
   useSmoothScroll();
 
-  // Set a unique key whenever pathname changes to force re-render
   useEffect(() => {
-    setKey(pathname + "-" + Date.now());
-  }, [pathname]);
-
-  useEffect(() => {
-    // Handle preloader timing
     const hasVisited = sessionStorage.getItem("hasVisited");
-    if (hasVisited) {
+    
+    if (hasVisited && !forceReload) {
       setIsFirstLoad(false);
     } else {
       const timer = setTimeout(() => {
         setIsFirstLoad(false);
         sessionStorage.setItem("hasVisited", "true");
-      }, 3000);
-      
+        setForceReload(false);
+      }, 2500); // 🔥 Adjust this time if you want the preloader to last longer
+    
       return () => clearTimeout(timer);
     }
+  }, [forceReload]);
+
+  // ✅ Function to force show the preloader again
+  useEffect(() => {
+    window.resetAndShowPreloader = () => {
+      sessionStorage.removeItem("hasVisited");
+      setForceReload(true);
+      setIsFirstLoad(true);
+    };
+
+    return () => {
+      delete window.resetAndShowPreloader;
+    };
   }, []);
 
   return (
@@ -46,7 +55,7 @@ export default function ClientLayout({
         {isFirstLoad && pathname === "/" ? (
           <Preloader key="preloader" />
         ) : (
-          <PageTransition key={key}>{children}</PageTransition>
+          <PageTransition key={pathname}>{children}</PageTransition>
         )}
       </AnimatePresence>
     </>
