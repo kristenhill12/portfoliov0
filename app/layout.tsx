@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description: "UX/UI Designer & Developer Portfolio",
 };
 
-export default function RootLayout({
+export default function Layout({
   children,
 }: {
   children: React.ReactNode;
